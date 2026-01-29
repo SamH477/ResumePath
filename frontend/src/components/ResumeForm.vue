@@ -1,45 +1,97 @@
 <script setup lang="ts">
 import { ref, defineEmits } from 'vue'
 
-// Define the custom emit
-const emit = defineEmits<{ (e: 'submit', payload: { name: string; email: string; experience: string }): void }>()
+const emit = defineEmits<{
+  (e: 'submit', payload: FormData): void
+}>()
 
-// Reactive form data
-const form = ref({
-  name: '',
-  email: '',
-  experience: ''
+const form = ref<{
+  file: File | null
+  city: string
+  state: string
+  job: string
+}>({
+  file: null,
+  city: '',
+  state: '',
+  job:''
 })
 
-// Function called to check that all fields are filled in when form is submitted
+function handleFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    form.value.file = target.files[0]
+  }
+}
+
 function handleSubmit() {
-  if (!form.value.name || !form.value.email || !form.value.experience) {
-    alert('Please fill out all fields.')
+  if (!form.value.file) {
+    alert('Please upload your resume.')
     return
   }
 
-  // Emit the data to be handled by the parent
-  emit('submit', { ...form.value })
+  if (!form.value.city || !form.value.state) {
+    alert('Please enter both city and state.')
+    return
+  }
+
+    if (!form.value.job) {
+    alert('Please enter job title.')
+    return
+  }
+
+  const formData = new FormData()
+  formData.append('resume', form.value.file)
+  formData.append('city', form.value.city)
+  formData.append('state', form.value.state)
+  formData.append('job', form.value.job)
+
+  emit('submit', formData)
 }
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit">
     <div>
-      <label for="name">Name:</label>
-      <input id="name" type="text" v-model="form.name" placeholder="Your full name" />
+      <label for="resume">Upload Resume:</label>
+      <input
+        id="resume"
+        type="file"
+        accept=".pdf,.doc,.docx"
+        @change="handleFileUpload"
+      />
     </div>
 
     <div>
-      <label for="email">Email:</label>
-      <input id="email" type="email" v-model="form.email" placeholder="Your email address" />
+      <label for="city">City:</label>
+      <input
+        id="city"
+        type="text"
+        v-model="form.city"
+        placeholder="e.g. Lancaster"
+      />
     </div>
 
     <div>
-      <label for="experience">Experience:</label>
-      <textarea id="experience" v-model="form.experience" placeholder="Brief description of your experience" rows="5"></textarea>
+      <label for="state">State:</label>
+      <input
+        id="state"
+        type="text"
+        v-model="form.state"
+        placeholder="e.g. PA"
+      />
     </div>
 
-    <button type="submit">Generate Resume</button>
+    <div>
+      <label for="job">Job Title:</label>
+      <input
+        id="job"
+        type="text"
+        v-model="form.job"
+        placeholder="e.g. Data Analyst"
+      />
+    </div>
+
+    <button type="submit">Find Matches</button>
   </form>
 </template>

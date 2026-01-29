@@ -6,10 +6,8 @@ import (
 )
 
 func main() {
-    http.HandleFunc("/api/hello", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "Hello from Go!")
-    })
+    http.HandleFunc("/api/matches", handleJobMatches)
 
-    fmt.Println("Go server running on http://localhost:8080")
+    fmt.Println("Server running on http://localhost:8080")
     http.ListenAndServe(":8080", nil)
 }

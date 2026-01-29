@@ -1,12 +1,12 @@
 <!-- frontend/src/App.vue -->
 <script setup lang="ts">
-import ResumeBuilder from './components/ResumeBuilder.vue'
+import JobMatcher from './components/jobMatcher.vue'
 </script>
 
 <template>
   <div id="app">
-    <h1>Resumify</h1>
-    <ResumeBuilder />
+    <h1>ResumePath</h1>
+    <JobMatcher />
   </div>
 </template>
 
