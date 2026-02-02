@@ -13,7 +13,7 @@ type JobMatch struct {
     ApplyURL string `json:"applyUrl"`
 }
 
-func scrapeJobs(skills []string) ([]JobMatch, error) {
+func scrapeJobs(job, city, state string) ([]JobMatch, error) {
     matches := []JobMatch{}
     c := colly.NewCollector()
 
@@ -34,10 +34,11 @@ func scrapeJobs(skills []string) ([]JobMatch, error) {
     })
 
     searchURL := fmt.Sprintf(
-        "https://www.indeed.com/jobs?q=%s",
-        skills[0],
+        "https://www.indeed.com/jobs?q=%s&l=%s,%s",
+        job, city, state,
     )
 
     c.Visit(searchURL)
     return matches, nil
 }
+

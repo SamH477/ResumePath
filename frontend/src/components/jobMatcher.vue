@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import ResumeForm from './ResumeForm.vue'
-import ResumeDownload from './JobMatches.vue'
+import Matches from './JobMatches.vue'
 
-const downloadUrl = ref('')
+interface JobPosting {
+  Title: string
+  Company: string
+  Location: string
+  URL: string
+}
+
+const jobPostings = ref<JobPosting[]>([])
 
 async function handleSubmit(fileFormData: FormData) {
   try {
@@ -12,10 +19,10 @@ async function handleSubmit(fileFormData: FormData) {
       body: fileFormData
     })
 
-    const blob = await response.blob()
-    downloadUrl.value = URL.createObjectURL(blob)
+    const jobs: JobPosting[] = await response.json()
+    jobPostings.value = jobs // update reactive state
   } catch (error) {
-    console.error('Error tailoring resume:', error)
+    console.error('Error scraping jobs:', error)
   }
 }
 </script>
@@ -23,7 +30,7 @@ async function handleSubmit(fileFormData: FormData) {
 <template>
   <div class="job-matcher">
     <ResumeForm @submit="handleSubmit" />
-    <ResumeDownload :fileUrl="downloadUrl" />
+    <Matches :jobs="jobPostings" />
   </div>
 </template>
 

@@ -34,10 +34,14 @@ func handleJobMatches(w http.ResponseWriter, r *http.Request) {
     }
     defer file.Close()
 
-    // TEMP: mocked skill extraction
-    skills := []string{"software engineer", "go", "react", "cloud"}
+	job := r.FormValue("job")
+    city := r.FormValue("city")
+    state := r.FormValue("state")
 
-    jobs, err := scrapeJobs(skills)
+    // TEMP: mocked skill extraction
+    skills := []string{"software engineer", "go", "react", "python"}
+
+    jobs, err := scrapeJobs(job, city, state)
     if err != nil {
         http.Error(w, "Scraping failed", http.StatusInternalServerError)
         return
